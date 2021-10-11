@@ -1,7 +1,7 @@
 # HTML files and score-predictor #
 ###################
 *.html
-./score-predictor
+score-predictor
 
 # Compiled source #
 ###################
