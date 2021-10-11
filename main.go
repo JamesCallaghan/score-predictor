@@ -4,15 +4,16 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/JamesCallaghan/score-predictor/pkg/fixtures"
-	"github.com/PuerkitoBio/goquery"
-	"gopkg.in/urfave/cli.v1"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/JamesCallaghan/score-predictor/pkg/fixtures"
+	"github.com/PuerkitoBio/goquery"
+	"gopkg.in/urfave/cli.v1"
 )
 
 func FileExists(name string) (bool, error) {
@@ -33,8 +34,8 @@ func main() {
 	var response [8]*http.Response
 	var document [8]*goquery.Document
 	var url [8]string
-	var gameWeek [8][]GameType
-	var fixture [8]GameType
+	var gameWeek [8][]fixtures.GameType
+	var fixture [8]fixtures.GameType
 	var hTeam [8]string
 	var aTeam [8]string
 	var scorePrediction [8]string
@@ -146,24 +147,24 @@ func main() {
 				}
 			}
 
-			gameWeek[a] = make([]GameType, 0)
+			gameWeek[a] = make([]fixtures.GameType, 0)
 
 			document[a].Find(".pttr.ptcnt").Each(func(_ int, game *goquery.Selection) {
 
 				game.Find(".pttd.ptmobh").Each(func(_ int, home *goquery.Selection) {
 					hTeam[a] = home.Text()
-					fixture[a].homeTeam = hTeam[a]
+					fixture[a].HomeTeam = hTeam[a]
 				})
 
 				game.Find(".pttd.ptmoba").Each(func(_ int, away *goquery.Selection) {
 					aTeam[a] = away.Text()
-					fixture[a].awayTeam = aTeam[a]
+					fixture[a].AwayTeam = aTeam[a]
 				})
 
 				game.Find(".pttd.ptprd").Each(func(_ int, p *goquery.Selection) {
 					p.Find(".ptpredboxsml").Each(func(_ int, prediction *goquery.Selection) {
 						scorePrediction[a] = prediction.Text()
-						fixture[a].scorePredic = scorePrediction[a]
+						fixture[a].ScorePredic = scorePrediction[a]
 					})
 				})
 
@@ -172,7 +173,7 @@ func main() {
 					past_results.Find(".ptneonboxsml2").Each(func(_ int, home_form *goquery.Selection) {
 						homeForm[a] = homeForm[a] + home_form.Text()
 					})
-					fixture[a].homeForm = homeForm[a]
+					fixture[a].HomeForm = homeForm[a]
 				})
 
 				game.Find(".pttd.ptlast5a").Each(func(_ int, past_results *goquery.Selection) {
@@ -180,7 +181,7 @@ func main() {
 					past_results.Find(".ptneonboxsml2").Each(func(_ int, away_form *goquery.Selection) {
 						awayForm[a] = awayForm[a] + away_form.Text()
 					})
-					fixture[a].awayForm = awayForm[a]
+					fixture[a].AwayForm = awayForm[a]
 				})
 
 				matchOdds[a] = "H/D/A---"
@@ -189,14 +190,14 @@ func main() {
 					odds.Find("a").Each(func(_ int, odds_string *goquery.Selection) {
 						matchOdds[a] = matchOdds[a] + odds_string.Text() + "---"
 					})
-					fixture[a].gameOdds = matchOdds[a]
+					fixture[a].GameOdds = matchOdds[a]
 
 				})
 
 				game.Find(".pttd.ptgame").Each(func(_ int, game_link *goquery.Selection) {
 					game_link.Find("a").Each(func(_ int, link *goquery.Selection) {
 						gameID[a], _ = link.Attr("href")
-						fixture[a].gid = gameID[a]
+						fixture[a].Gid = gameID[a]
 					})
 
 				})
@@ -210,13 +211,13 @@ func main() {
 		homeFlag := c.GlobalString("home")
 		awayFlag := c.GlobalString("away")
 		g1 := fixtures.FindFixture(gameWeek, homeFlag, awayFlag)
-		fmt.Printf("Score Prediction is: %s\n", g1.scorePredic)
-		fmt.Printf("Odds are: %s\n", g1.gameOdds)
-		fmt.Printf("%s past 5 games form: %s\n", homeFlag, g1.homeForm)
-		fmt.Printf("%s past 5 games form: %s\n", awayFlag, g1.awayForm)
-		fmt.Printf("Game link: %s\n", g1.gid)
+		fmt.Printf("Score Prediction is: %s\n", g1.ScorePredic)
+		fmt.Printf("Odds are: %s\n", g1.GameOdds)
+		fmt.Printf("%s past 5 games form: %s\n", homeFlag, g1.HomeForm)
+		fmt.Printf("%s past 5 games form: %s\n", awayFlag, g1.AwayForm)
+		fmt.Printf("Game link: %s\n", g1.Gid)
 
-		url2 := g1.gid
+		url2 := g1.Gid
 
 		request2, err2 := http.NewRequest("GET", url2, nil)
 		if err2 != nil {

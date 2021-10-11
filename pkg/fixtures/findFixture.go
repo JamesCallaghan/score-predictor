@@ -1,18 +1,19 @@
 package fixtures
 
 import (
-	"github.com/agnivade/levenshtein"
 	"strings"
+
+	"github.com/agnivade/levenshtein"
 )
 
 type GameType struct {
-	homeTeam    string
-	awayTeam    string
-	homeForm    string
-	awayForm    string
-	scorePredic string
-	gameOdds    string
-	gid         string
+	HomeTeam    string
+	AwayTeam    string
+	HomeForm    string
+	AwayForm    string
+	ScorePredic string
+	GameOdds    string
+	Gid         string
 }
 
 func stringRatio(str1, str2 string) float64 {
@@ -58,7 +59,7 @@ func FindFixture(glist [8][]GameType, hteam string, ateam string) GameType {
 	var gm GameType
 	for _, h := range glist {
 		for _, g := range h {
-			if matchGame(g.homeTeam, hteam) && matchGame(g.awayTeam, ateam) {
+			if matchGame(g.HomeTeam, hteam) && matchGame(g.AwayTeam, ateam) {
 				gm = g
 			}
 		}
