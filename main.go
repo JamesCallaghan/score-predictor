@@ -255,8 +255,12 @@ func main() {
 			})
 		})
 
-		fmt.Printf("%s league position: %s\n", homeFlag, leaguePositions[0])
-		fmt.Printf("%s league position: %s\n", awayFlag, leaguePositions[1])
+		if len(leaguePositions) == 0 {
+			fmt.Printf("League positions not available\n")
+		} else {
+			fmt.Printf("%s league position: %s\n", homeFlag, leaguePositions[0])
+			fmt.Printf("%s league position: %s\n", awayFlag, leaguePositions[1])
+		}
 
 		return nil
 	}
